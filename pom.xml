@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+
+    <packaging>pom</packaging>
+    <groupId>com.adventofcode</groupId>
+    <artifactId>day-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Advent of Code 2023</name>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <junit.version>5.10.1</junit.version>
+    </properties>
+
+    <modules>
+        <module>day01</module>
+        <module>day02</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:https://github.com/andreas-tapper/AdventOfCode2023</connection>
+        <developerConnection>scm:git:https://github.com/andreas-tapper/AdventOfCode2023</developerConnection>
+        <url>https://github.com/andreas-tapper/AdventOfCode2023</url>
+    </scm>
+
+</project>

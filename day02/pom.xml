@@ -12,11 +12,11 @@
 
     <packaging>jar</packaging>
     <groupId>com.adventofcode</groupId>
-    <artifactId>day01</artifactId>
+    <artifactId>day02</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>day01</name>
-    <description>Day 1 of advent of code 2023.</description>
+    <name>day02</name>
+    <description>Day 2 of advent of code 2023.</description>
  
     <dependencyManagement>
         <dependencies>
