@@ -30,7 +30,7 @@ public class App
     private static void partOne(String input) throws IOException {
         try(var reader = new BufferedReader(new FileReader(input, Charset.forName("UTF-8")))) {
             var lines = reader.lines().toList();
-            var drawPattern = Pattern.compile("(?<amount>\\d+)\\s+(?<color>[a-z]+)", Pattern.CASE_INSENSITIVE);
+            var drawPattern = Pattern.compile("(?<amount>\\d+)\\s+(?<color>\\w+)", Pattern.CASE_INSENSITIVE);
             var gems = new HashMap<String, Integer>();
             gems.put("red", 12);
             gems.put("green", 13);
@@ -39,15 +39,16 @@ public class App
             var sum = 0;
             for (var line : lines) {
                 var game = Integer.parseInt(line.substring(5, line.indexOf(':')));
-
-                var draw = Arrays.stream(line.substring(line.indexOf(':') + 1).split(";"))
+                var valid = Arrays.stream(line.substring(line.indexOf(':') + 1).split(";"))
+                        .map(x -> x.split(","))
+                        .flatMap(Arrays::stream)
                         .map(String::trim)
                         .map(drawPattern::matcher)
                         .filter(Matcher::matches)
                         .map(x -> new Draw(x.group("color"), Integer.parseInt(x.group("amount"))))
-                        .toList();
+                        .allMatch(x -> gems.get(x.gem) >= x.count);
 
-                if (draw.stream().allMatch(x -> x.count <= gems[x.gem])) {
+                if (valid) {
                     sum += game;
                 }
             }
@@ -58,12 +59,43 @@ public class App
 
     private static void partTwo(String input) throws IOException {
         try(var reader = new BufferedReader(new FileReader(input, Charset.forName("UTF-8")))) {
-            var lines = reader.lines()
-                    .collect(toList());
+            var lines = reader.lines().toList();
+            var drawPattern = Pattern.compile("(?<amount>\\d+)\\s+(?<color>\\w+)", Pattern.CASE_INSENSITIVE);
+            var gems = new HashMap<String, Integer>();
+            gems.put("red", 12);
+            gems.put("green", 13);
+            gems.put("blue", 14);
 
             var sum = 0;
+            for (var line : lines) {
+                var game = Integer.parseInt(line.substring(5, line.indexOf(':')));
+                var draw = Arrays.stream(line.substring(line.indexOf(':') + 1).split(";"))
+                        .map(x -> x.split(","))
+                        .flatMap(Arrays::stream)
+                        .map(String::trim)
+                        .map(drawPattern::matcher)
+                        .filter(Matcher::matches)
+                        .map(x -> new Draw(x.group("color"), Integer.parseInt(x.group("amount"))))
+                        .toList();
+
+                var red = draw.stream()
+                        .filter(x -> x.gem.equals("red"))
+                        .max(Comparator.comparingInt(a -> a.count))
+                        .orElseThrow();
+                var green = draw.stream()
+                        .filter(x -> x.gem.equals("green"))
+                        .max(Comparator.comparingInt(a -> a.count))
+                        .orElseThrow();
+                var blue = draw.stream()
+                        .filter(x -> x.gem.equals("blue"))
+                        .max(Comparator.comparingInt(a -> a.count))
+                        .orElseThrow();
+
+                sum += red.count * green.count * blue.count;
+            }
 
             System.out.printf("Answer is: %d%n", sum);
+
         }
     }
 
