@@ -66,7 +66,7 @@ public class AppTest
 
         if(answer.isEmpty()) fail("Could not find answer.");
 
-        assertEquals("54239", answer.substring(11));
+        assertEquals("536576", answer.substring(11));
     }
 
     @Test
