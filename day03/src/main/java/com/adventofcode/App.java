@@ -2,7 +2,9 @@ package com.adventofcode;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.*;
 import java.util.stream.IntStream;
@@ -83,47 +85,107 @@ public class App
                 next = reader.readLine();
             }
 
-
-
-
             System.out.printf("Answer is: %d%n", sum);
         }
     }
 
     private static void partTwo(String input) throws IOException {
         try(var reader = new BufferedReader(new FileReader(input, Charset.forName("UTF-8")))) {
-            var lines = reader.lines()
-                    .collect(toList());
-
             var sum = 0;
-            var validNumbers = Set.of(
-                    new Number("1", "1"), new Number("one", "1"),
-                    new Number("2", "2"), new Number("two", "2"),
-                    new Number("3", "3"), new Number("three", "3"),
-                    new Number("4", "4"), new Number("four", "4"),
-                    new Number("5", "5"), new Number("five", "5"),
-                    new Number("6", "6"), new Number("six", "6"),
-                    new Number("7", "7"), new Number("seven", "7"),
-                    new Number("8", "8"), new Number("eight", "8"),
-                    new Number("9", "9"), new Number("nine", "9"));
+            String previous = null;
+            var current = reader.readLine();
+            var next = reader.readLine();
 
-            for (var line : lines) {
-                var first = validNumbers.stream()
-                        .map(x -> new Position(x, line.indexOf(x.Name)))
-                        .filter(x -> x.Position >= 0)
-                        .min(Comparator.comparingInt(a -> a.Position))
-                        .orElseThrow()
-                        .Number
-                        .Value();
-                var last = validNumbers.stream()
-                        .map(x -> new Position(x, line.lastIndexOf(x.Name)))
-                        .filter(x -> x.Position >= 0)
-                        .max(Comparator.comparingInt(a -> a.Position))
-                        .orElseThrow()
-                        .Number
-                        .Value();
+            IntPredicate isNumeric = x -> x >= 48 && x <= 57;
+            IntPredicate isCog = x -> x == 42;
+            BiFunction<String, Integer, Integer> indexOfSymbol = (value, index) -> {
+                for(var i=index; i < value.length(); i += 1) {
+                    if (!isNumeric.test(value.charAt(i))) {
+                        return i;
+                    }
+                }
+                return -1;
+            };
+            BiFunction<String, Integer, Integer> lastIndexOfSymbol = (value, index) -> {
+                for(var i=index; i >= 0; i -= 1) {
+                    if (!isNumeric.test(value.charAt(i))) {
+                        return i;
+                    }
+                }
+                return -1;
+            };
+            BiFunction<String, Integer, Integer> parseInteger = (value, index) -> {
+                var back = lastIndexOfSymbol.apply(value, index);
+                var forward = indexOfSymbol.apply(value, index);
 
-                sum += Integer.parseInt(first + last);
+                if (forward == -1) {
+                   forward = value.length();
+                }
+
+                if(back >= forward) {
+                    throw new IllegalStateException(String.format("[%d..%d] does not make sense in %s", back, forward, value));
+                }
+
+                var str = value.substring(back + 1, forward);
+                return Integer.parseInt(str);
+            };
+
+            while(current != null) {
+                for (var i=0; i < current.length(); i += 1) {
+                    if (!isCog.test(current.charAt(i))) {
+                        continue;
+                    }
+
+                    var numbers = new ArrayList<Integer>();
+
+                    if(previous != null) {
+                        if (isNumeric.test(previous.charAt(i))) {
+                            numbers.add(parseInteger.apply(previous, i));
+                        } else {
+                            if(i > 0 && isNumeric.test(previous.charAt(i - 1))) {
+                                numbers.add(parseInteger.apply(previous, i - 1));
+                            }
+
+                            if(i + 1 < previous.length() && isNumeric.test(previous.charAt(i + 1))) {
+                                numbers.add(parseInteger.apply(previous, i + 1));
+                            }
+                        }
+                    }
+
+                    if(i > 0 && isNumeric.test(current.charAt(i - 1))) {
+                        numbers.add(parseInteger.apply(current, i - 1));
+                    }
+
+                    if(i + 1 < current.length() && isNumeric.test(current.charAt(i + 1))) {
+                        numbers.add(parseInteger.apply(current, i + 1));
+                    }
+
+                    if(next != null) {
+                        if (isNumeric.test(next.charAt(i))) {
+                            numbers.add(parseInteger.apply(next, i));
+                        } else {
+                            if(i > 0 && isNumeric.test(next.charAt(i - 1))) {
+                                numbers.add(parseInteger.apply(next, i - 1));
+                            }
+
+                            if(i + 1 < next.length() && isNumeric.test(next.charAt(i + 1))) {
+                                numbers.add(parseInteger.apply(next, i + 1));
+                            }
+                        }
+                    }
+
+                    if (numbers.size() == 2) {
+                        sum += numbers.get(0) * numbers.get(1);
+                    }
+
+                    var forward = indexOfSymbol.apply(current, i);
+                    if(forward == -1) break;
+                    i = forward;
+                }
+
+                previous = current;
+                current = next;
+                next = reader.readLine();
             }
 
             System.out.printf("Answer is: %d%n", sum);

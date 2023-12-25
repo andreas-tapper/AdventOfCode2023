@@ -71,7 +71,7 @@ public class AppTest
 
     @Test
     public void testExampleTwo() throws IOException {
-        var path = Paths.get("src","test","resources","example02.txt").toFile().getAbsolutePath();
+        var path = Paths.get("src","test","resources","example01.txt").toFile().getAbsolutePath();
 
         App.main(new String[]{"2", path});
 
@@ -83,7 +83,7 @@ public class AppTest
 
         if(answer.isEmpty()) fail("Could not find answer.");
 
-        assertEquals("281", answer.substring(11));
+        assertEquals("467835", answer.substring(11).trim());
     }
 
     @Test
@@ -100,6 +100,6 @@ public class AppTest
 
         if(answer.isEmpty()) fail("Could not find answer.");
 
-        assertEquals("55343", answer.substring(11));
+        assertEquals("75741499", answer.substring(11).trim());
     }
 }
