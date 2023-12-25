@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 public class App
 {
     public static void main( String[] args ) throws IOException {
-        System.out.println( "Day 1 of Advent of Code 2023." );
+        System.out.println( "Day 3 of Advent of Code 2023." );
 
         if(args.length < 1) {
             System.out.println("usage <filename with inputs>");
