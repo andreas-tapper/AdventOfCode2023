@@ -100,11 +100,7 @@ public class App
                 var copies = cards.get(card) - 1;
                 for (var i = 0; i < matches; i += 1) {
                     int copy = cards.getOrDefault(card + 1 + i, 0) + 1;
-
-                    if(copies > 0) {
-                        copy += copies;
-                    }
-
+                    copy += copies;
                     cards.put(card + 1 + i, copy);
                 }
 
